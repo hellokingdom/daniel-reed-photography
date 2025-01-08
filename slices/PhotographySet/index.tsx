@@ -1,11 +1,11 @@
-import { Content } from "@prismicio/client";
-import { SliceComponentProps } from "@prismicio/react";
+import { Content } from '@prismicio/client'
+import { SliceComponentProps } from '@prismicio/react'
 
 /**
  * Props for `PhotographySet`.
  */
 export type PhotographySetProps =
-  SliceComponentProps<Content.PhotographySetSlice>;
+  SliceComponentProps<Content.PhotographySetSlice>
 
 /**
  * Component for "PhotographySet" Slices.
@@ -17,9 +17,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       data-slice-variation={slice.variation}
     >
       Placeholder component for photography_set (variation: {slice.variation})
-      Slices
+      Slicesss
     </section>
-  );
-};
+  )
+}
 
-export default PhotographySet;
+export default PhotographySet
