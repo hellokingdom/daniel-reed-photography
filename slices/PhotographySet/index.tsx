@@ -18,6 +18,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const portraitWidthRef = useRef<number | null>(null)
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
+  const [cursorClass, setCursorClass] = useState('cursor-e-resize')
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev()
@@ -85,11 +86,22 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     }
   }, [])
 
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, currentTarget } = event
+    const { left, width } = currentTarget.getBoundingClientRect()
+    const hoverPosition = clientX - left
+
+    if (hoverPosition < width / 2) {
+      setCursorClass('cursor-w-resize')
+    } else {
+      setCursorClass('cursor-e-resize')
+    }
+  }
+
   return (
     <>
       <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
         <div
-          id="measuring-container"
           ref={measuringContainerRef}
           className="aspect-[3/4] w-full laptop:w-auto laptop:h-[90%]"
         ></div>
@@ -98,6 +110,8 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         data-slice-type={slice.slice_type}
         data-slice-variation={slice.variation}
         onClick={handleClick}
+        onMouseMove={handleMouseMove}
+        className={cursorClass}
       >
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">
