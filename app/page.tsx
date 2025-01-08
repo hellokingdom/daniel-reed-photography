@@ -9,7 +9,7 @@ export default async function Page() {
   const page = await client.getSingle('home')
 
   return (
-    <div className="p-8 flex flex-col gap-y-8">
+    <div className="p-4 flex flex-col gap-y-8">
       <SliceZone slices={page.data.slices} components={components} />
     </div>
   )
