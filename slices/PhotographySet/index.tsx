@@ -127,7 +127,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
         <div
           ref={measuringContainerRef}
-          className="aspect-[3/4] w-full laptop:w-auto laptop:h-[90%]"
+          className="aspect-[3/4] w-full laptop:w-auto laptop:h-[90%] user-select-none"
         ></div>
       </div>
       <section
@@ -139,9 +139,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         data-current-slide={current}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
-        className={`${cursorClass}`}
+        className={`${cursorClass} user-select-none`}
       >
-        <div className="embla" ref={emblaRef}>
+        <div className="embla pointer-events-none" ref={emblaRef}>
           <div className="embla__container">
             {slice.primary.images.map((item, index) => (
               <div
