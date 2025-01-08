@@ -29,6 +29,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     if (portraitWidthRef.current === null) {
       portraitWidthRef.current = img.clientWidth
     }
+
+    // Make the image visible after it has been loaded
+    img.style.visibility = 'visible'
   }
 
   useEffect(() => {
@@ -70,6 +73,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                         ? 'landscape-image rotate-0 flex items-center justify-center'
                         : ''
                     }`}
+                    style={{ visibility: 'hidden' }}
                     onLoad={(e) =>
                       handleImageLoad(index, e.target as HTMLImageElement)
                     }
