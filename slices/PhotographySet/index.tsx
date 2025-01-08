@@ -12,6 +12,8 @@ export type PhotographySetProps =
 
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
   const [aspectRatios, setAspectRatios] = useState<
     Array<'portrait' | 'landscape'>
   >(Array(slice.primary.images.length).fill('portrait'))
@@ -19,13 +21,26 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [cursorClass, setCursorClass] = useState('cursor-e-resize')
-
+  const [currentSlide, setCurrentSlide] = useState(0)
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev()
-  }, [emblaApi])
+    setCurrentSlide((prev) => prev - 1)
+  }, [])
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext()
+    setCurrentSlide((prev) => prev + 1)
+  }, [])
+
+  useEffect(() => {
+    if (!emblaApi) {
+      return
+    }
+
+    setCount(emblaApi.scrollSnapList().length)
+    setCurrent(emblaApi.selectedScrollSnap() + 1)
+
+    emblaApi.on('select', () => {
+      setCurrent(emblaApi.selectedScrollSnap() + 1)
+    })
   }, [emblaApi])
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -34,9 +49,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     const clickPosition = clientX - left
 
     if (clickPosition < width / 2) {
-      scrollPrev()
+      emblaApi?.scrollPrev()
     } else {
-      scrollNext()
+      emblaApi?.scrollNext()
     }
   }
 
@@ -109,6 +124,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       <section
         data-slice-type={slice.slice_type}
         data-slice-variation={slice.variation}
+        data-section-name={slice.primary.title}
+        data-total-slides={count}
+        data-current-slide={current}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         className={cursorClass}
