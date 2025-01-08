@@ -13,6 +13,12 @@ export default {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
       },
+      screens: {
+        tablet: '768px',
+        laptop: '1025px',
+        desktop: '1536px',
+        widescreen: '1921px',
+      },
     },
   },
   plugins: [],

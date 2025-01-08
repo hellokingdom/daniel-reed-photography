@@ -69,40 +69,32 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      className="w-full lg:h-[90vh] relative"
       onClick={handleClick}
     >
-      <div
-        className="embla lg:absolute lg:inset-0 flex items-center justify-center"
-        ref={emblaRef}
-      >
-        <div className="embla__container h-full lg:m-8 mx-4 mt-4">
+      <div className="embla" ref={emblaRef}>
+        <div className="embla__container">
           {slice.primary.images.map((item, index) => (
             <div
-              className="flex items-center justify-center h-full w-full embla__slide"
+              className="embla__slide flex items-center justify-center"
               key={`${slice.primary.title}-${index}`}
             >
-              <div className="relative h-full flex items-center justify-center">
-                <div
-                  className={`relative h-full flex items-center justify-center border ${
-                    aspectRatios[index] === 'portrait'
-                      ? 'aspect-[3/4] border-blue-500'
-                      : 'aspect-[6/4] border-pink-500'
+              <div
+                className={`relative flex items-center justify-center border ${
+                  aspectRatios[index] === 'portrait'
+                    ? 'aspect-[3/4] w-[800px]'
+                    : 'aspect-[6/4] h-[800px]'
+                }`}
+              >
+                <PrismicNextImage
+                  field={item.image}
+                  className={`object-cover w-full h-full block ${
+                    aspectRatios[index] === 'landscape' ? '' : ''
                   }`}
-                >
-                  <PrismicNextImage
-                    field={item.image}
-                    className={`object-contain w-full h-full ${
-                      aspectRatios[index] === 'landscape'
-                        ? 'landscape-image rotate-0 flex items-center justify-center'
-                        : ''
-                    }`}
-                    style={{ visibility: 'hidden' }}
-                    onLoad={(e) =>
-                      handleImageLoad(index, e.target as HTMLImageElement)
-                    }
-                  />
-                </div>
+                  style={{ visibility: 'hidden' }}
+                  onLoad={(e) =>
+                    handleImageLoad(index, e.target as HTMLImageElement)
+                  }
+                />
               </div>
             </div>
           ))}
