@@ -13,7 +13,7 @@ export default async function Page() {
       <div className="p-2 laptop:p-4 flex flex-col laptop:gap-y-8 gap-y-4">
         <SliceZone slices={page.data.slices} components={components} />
       </div>
-      <div className="fixed w-full h-full flex z-50 inset-0 pointer-events-none p-8">
+      <div className="fixed w-full h-full z-50 inset-0 pointer-events-none p-8 hidden laptop:flex">
         <div className="w-1/2 h-full flex flex-col justify-center items-start">
           <div>Bloom [ 1/12 ]</div>
         </div>
