@@ -11,6 +11,10 @@ export default async function Page() {
 
   return (
     <>
+      <header className="flex justify-between items-center px-2 pt-6 laptop:hidden">
+        <div>about</div>
+        <div>danielreed.photography</div>
+      </header>
       <div className="p-2 laptop:p-4 flex flex-col laptop:gap-y-8 gap-y-4">
         <SliceZone slices={page.data.slices} components={components} />
       </div>
