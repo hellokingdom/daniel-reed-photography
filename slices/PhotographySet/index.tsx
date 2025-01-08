@@ -7,12 +7,17 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
+import { bloomTextAtom } from '@/atoms/bloomTextAtom'
+import { useAtom } from 'jotai/react'
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
 
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
+
+  const [, setBloomText] = useAtom(bloomTextAtom)
+
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
   const [aspectRatios, setAspectRatios] = useState<
@@ -25,7 +30,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
 
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, {
-    amount: 0.55,
+    amount: 0.5,
   })
 
   useEffect(() => {
@@ -40,6 +45,12 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       setCurrent(emblaApi.selectedScrollSnap() + 1)
     })
   }, [emblaApi])
+
+  useEffect(() => {
+    if (inView) {
+      setBloomText(`${slice.primary.title} [ ${current}/${count} ]`)
+    }
+  }, [inView, current, count, setBloomText, slice.primary.title])
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, currentTarget } = event
@@ -128,7 +139,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         data-current-slide={current}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
-        className={`${cursorClass} ${inView ? 'bg-blue-500' : ''}`}
+        className={`${cursorClass}`}
       >
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">

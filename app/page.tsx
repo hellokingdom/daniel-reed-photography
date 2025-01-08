@@ -3,6 +3,7 @@ import { SliceZone } from '@prismicio/react'
 
 import { createClient } from '@/prismicio'
 import { components } from '@/slices'
+import { BloomText } from '@/components/bloomText'
 
 export default async function Page() {
   const client = createClient()
@@ -15,7 +16,7 @@ export default async function Page() {
       </div>
       <div className="fixed w-full h-full z-50 inset-0 pointer-events-none p-8 hidden laptop:flex">
         <div className="w-1/2 h-full flex flex-col justify-center items-start">
-          <div>Bloom [ 1/12 ]</div>
+          <BloomText />
         </div>
         <div className="w-1/2 h-full flex flex-col justify-center items-end">
           <div className="">danielreed.photography</div>
