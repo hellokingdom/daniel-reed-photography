@@ -4,18 +4,38 @@ import { Content } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
 import { SliceComponentProps } from '@prismicio/react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { JSX, useState, useEffect, useRef } from 'react'
+import { JSX, useState, useEffect, useRef, useCallback } from 'react'
 import Fade from 'embla-carousel-fade'
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
 
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
-  const [emblaRef] = useEmblaCarousel({ loop: false }, [Fade()])
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
   const [aspectRatios, setAspectRatios] = useState<
     Array<'portrait' | 'landscape'>
   >(Array(slice.primary.images.length).fill('portrait'))
   const portraitWidthRef = useRef<number | null>(null)
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, currentTarget } = event
+    const { left, width } = currentTarget.getBoundingClientRect()
+    const clickPosition = clientX - left
+
+    if (clickPosition < width / 2) {
+      scrollPrev()
+    } else {
+      scrollNext()
+    }
+  }
 
   const handleImageLoad = (index: number, img: HTMLImageElement) => {
     setAspectRatios((prevRatios: Array<'portrait' | 'landscape'>) => {
@@ -49,21 +69,25 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      className="w-full h-[90vh] relative"
+      className="w-full lg:h-[90vh] relative"
+      onClick={handleClick}
     >
-      <div className="embla absolute inset-0" ref={emblaRef}>
-        <div className="embla__container h-full my-8">
+      <div
+        className="embla lg:absolute lg:inset-0 flex items-center justify-center"
+        ref={emblaRef}
+      >
+        <div className="embla__container h-full lg:m-8 mx-4 mt-4">
           {slice.primary.images.map((item, index) => (
             <div
               className="flex items-center justify-center h-full w-full embla__slide"
               key={`${slice.primary.title}-${index}`}
             >
-              <div className="relative h-full aspect-square max-w-full max-h-full flex items-center justify-center">
+              <div className="relative h-full flex items-center justify-center">
                 <div
-                  className={`relative h-full flex items-center justify-center ${
+                  className={`relative h-full flex items-center justify-center border ${
                     aspectRatios[index] === 'portrait'
-                      ? 'aspect-[3/4]'
-                      : 'aspect-[6/4]'
+                      ? 'aspect-[3/4] border-blue-500'
+                      : 'aspect-[6/4] border-pink-500'
                   }`}
                 >
                   <PrismicNextImage
