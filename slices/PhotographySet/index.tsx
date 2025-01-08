@@ -107,10 +107,10 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                 key={`${slice.primary.title}-${index}`}
               >
                 <div
-                  className={`relative flex items-center justify-center border ${
+                  className={`relative flex items-center justify-center ${
                     aspectRatios[index] === 'portrait'
                       ? `aspect-[3/4]`
-                      : 'aspect-[6/4]'
+                      : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
                     width:
@@ -125,7 +125,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                 >
                   <PrismicNextImage
                     field={item.image}
-                    className={`object-cover w-full h-full block ${
+                    className={`object-contain w-full h-full block ${
                       aspectRatios[index] === 'landscape' ? '' : ''
                     }`}
                     style={{ visibility: 'hidden' }}
