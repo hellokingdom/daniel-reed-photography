@@ -19,7 +19,9 @@ export default async function Page() {
           <BloomText />
         </div>
         <div className="w-1/2 h-full flex flex-col justify-center items-end">
-          <div className="">danielreed.photography</div>
+          <a className=" pointer-events-auto cursor-pointer">
+            danielreed.photography
+          </a>
         </div>
       </div>
     </>

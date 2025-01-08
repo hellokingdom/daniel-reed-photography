@@ -78,7 +78,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     }
 
     // Make the image visible after it has been loaded
-    img.style.visibility = 'visible'
+    setTimeout(() => {
+      img.style.visibility = 'visible'
+    }, 1)
   }
 
   useEffect(() => {
