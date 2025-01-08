@@ -4,7 +4,7 @@ import { Content } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
 import { SliceComponentProps } from '@prismicio/react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { JSX, useState, useEffect, useRef, useCallback } from 'react'
+import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
 
 export type PhotographySetProps =
@@ -21,14 +21,6 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [cursorClass, setCursorClass] = useState('cursor-e-resize')
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const scrollPrev = useCallback(() => {
-    setCurrentSlide((prev) => prev - 1)
-  }, [])
-
-  const scrollNext = useCallback(() => {
-    setCurrentSlide((prev) => prev + 1)
-  }, [])
 
   useEffect(() => {
     if (!emblaApi) {
