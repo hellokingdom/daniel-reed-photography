@@ -68,8 +68,20 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   }, [aspectRatios])
 
   useEffect(() => {
-    if (measuringContainerRef.current) {
-      setContainerWidth(measuringContainerRef.current.clientWidth)
+    const updateContainerWidth = () => {
+      if (measuringContainerRef.current) {
+        setContainerWidth(measuringContainerRef.current.clientWidth)
+      }
+    }
+
+    window.addEventListener('resize', updateContainerWidth)
+
+    // Initial call to set the width
+    updateContainerWidth()
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('resize', updateContainerWidth)
     }
   }, [])
 
