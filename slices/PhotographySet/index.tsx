@@ -5,12 +5,13 @@ import { PrismicNextImage } from '@prismicio/next'
 import { SliceComponentProps } from '@prismicio/react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
+import Fade from 'embla-carousel-fade'
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
 
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
-  const [emblaRef] = useEmblaCarousel({ loop: false })
+  const [emblaRef] = useEmblaCarousel({ loop: false }, [Fade()])
   const [aspectRatios, setAspectRatios] = useState<
     Array<'portrait' | 'landscape'>
   >(Array(slice.primary.images.length).fill('portrait'))
@@ -48,15 +49,15 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       className="w-full h-[90vh] relative"
     >
       <div className="embla absolute inset-0" ref={emblaRef}>
-        <div className="embla__container h-full">
+        <div className="embla__container h-full my-8">
           {slice.primary.images.map((item, index) => (
             <div
               className="flex items-center justify-center h-full w-full embla__slide"
-              key={index}
+              key={`${slice.primary.title}-${index}`}
             >
               <div className="relative h-full aspect-square max-w-full max-h-full flex items-center justify-center">
                 <div
-                  className={`relative border h-full flex items-center justify-center ${
+                  className={`relative h-full flex items-center justify-center ${
                     aspectRatios[index] === 'portrait'
                       ? 'aspect-[3/4]'
                       : 'aspect-[6/4]'
