@@ -16,6 +16,8 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     Array<'portrait' | 'landscape'>
   >(Array(slice.primary.images.length).fill('portrait'))
   const portraitWidthRef = useRef<number | null>(null)
+  const measuringContainerRef = useRef<HTMLDivElement | null>(null)
+  const [containerWidth, setContainerWidth] = useState<number | null>(null)
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev()
@@ -65,42 +67,67 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     }
   }, [aspectRatios])
 
+  useEffect(() => {
+    if (measuringContainerRef.current) {
+      setContainerWidth(measuringContainerRef.current.clientWidth)
+    }
+  }, [])
+
   return (
-    <section
-      data-slice-type={slice.slice_type}
-      data-slice-variation={slice.variation}
-      onClick={handleClick}
-    >
-      <div className="embla" ref={emblaRef}>
-        <div className="embla__container">
-          {slice.primary.images.map((item, index) => (
-            <div
-              className="embla__slide flex items-center justify-center"
-              key={`${slice.primary.title}-${index}`}
-            >
-              <div
-                className={`relative flex items-center justify-center border ${
-                  aspectRatios[index] === 'portrait'
-                    ? 'aspect-[3/4] w-[800px]'
-                    : 'aspect-[6/4] h-[800px]'
-                }`}
-              >
-                <PrismicNextImage
-                  field={item.image}
-                  className={`object-cover w-full h-full block ${
-                    aspectRatios[index] === 'landscape' ? '' : ''
-                  }`}
-                  style={{ visibility: 'hidden' }}
-                  onLoad={(e) =>
-                    handleImageLoad(index, e.target as HTMLImageElement)
-                  }
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+    <>
+      <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
+        <div
+          id="measuring-container"
+          ref={measuringContainerRef}
+          className="aspect-[3/4] w-full laptop:w-auto laptop:h-[90%]"
+        ></div>
       </div>
-    </section>
+      <section
+        data-slice-type={slice.slice_type}
+        data-slice-variation={slice.variation}
+        onClick={handleClick}
+      >
+        <div className="embla" ref={emblaRef}>
+          <div className="embla__container">
+            {slice.primary.images.map((item, index) => (
+              <div
+                className="embla__slide flex items-center justify-center"
+                key={`${slice.primary.title}-${index}`}
+              >
+                <div
+                  className={`relative flex items-center justify-center border ${
+                    aspectRatios[index] === 'portrait'
+                      ? `aspect-[3/4]`
+                      : 'aspect-[6/4]'
+                  }`}
+                  style={{
+                    width:
+                      aspectRatios[index] === 'portrait'
+                        ? (containerWidth ?? 'auto')
+                        : 'auto',
+                    height:
+                      aspectRatios[index] === 'landscape'
+                        ? (containerWidth ?? 'auto')
+                        : 'auto',
+                  }}
+                >
+                  <PrismicNextImage
+                    field={item.image}
+                    className={`object-cover w-full h-full block ${
+                      aspectRatios[index] === 'landscape' ? '' : ''
+                    }`}
+                    style={{ visibility: 'hidden' }}
+                    onLoad={(e) =>
+                      handleImageLoad(index, e.target as HTMLImageElement)
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
 
