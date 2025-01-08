@@ -1,0 +1,34 @@
+{
+  "id": "photography_set",
+  "type": "SharedSlice",
+  "name": "PhotographySet",
+  "description": "PhotographySet",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "image": {
+          "type": "Group",
+          "config": {
+            "label": "Image",
+            "repeat": true,
+            "fields": {}
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": ""
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
