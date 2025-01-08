@@ -13,6 +13,9 @@ export default {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
       },
+      fontFamily: {
+        sans: ['var(--font-roboto)'],
+      },
       screens: {
         tablet: '768px',
         laptop: '1025px',
