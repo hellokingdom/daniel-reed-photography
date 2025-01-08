@@ -24,11 +24,8 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       return newRatios
     })
 
-    // Measure the width of a portrait image
-    if (
-      aspectRatios[index] === 'portrait' &&
-      portraitWidthRef.current === null
-    ) {
+    // Measure the width of a portrait image or use the first image as a fallback
+    if (portraitWidthRef.current === null) {
       portraitWidthRef.current = img.clientWidth
     }
   }
@@ -59,10 +56,10 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
             >
               <div className="relative h-full aspect-square max-w-full max-h-full flex items-center justify-center">
                 <div
-                  className={`relative border h-full ${
+                  className={`relative border h-full flex items-center justify-center ${
                     aspectRatios[index] === 'portrait'
-                      ? 'border-blue-500 aspect-[3/4]'
-                      : 'border-pink-500 aspect-[6/4] flex items-center justify-center'
+                      ? 'aspect-[3/4]'
+                      : 'aspect-[6/4]'
                   }`}
                 >
                   <PrismicNextImage
