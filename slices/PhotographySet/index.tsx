@@ -6,6 +6,7 @@ import { SliceComponentProps } from '@prismicio/react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
+import { useInView } from 'framer-motion'
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
@@ -21,6 +22,11 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [cursorClass, setCursorClass] = useState('cursor-e-resize')
+
+  const ref = useRef<HTMLDivElement | null>(null)
+  const inView = useInView(ref, {
+    amount: 0.55,
+  })
 
   useEffect(() => {
     if (!emblaApi) {
@@ -114,6 +120,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         ></div>
       </div>
       <section
+        ref={ref}
         data-slice-type={slice.slice_type}
         data-slice-variation={slice.variation}
         data-section-name={slice.primary.title}
@@ -121,7 +128,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         data-current-slide={current}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
-        className={cursorClass}
+        className={`${cursorClass} ${inView ? 'bg-blue-500' : ''}`}
       >
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">
