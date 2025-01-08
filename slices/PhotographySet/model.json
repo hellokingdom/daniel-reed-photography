@@ -12,19 +12,28 @@
       "description": "Default",
       "imageUrl": "",
       "primary": {
-        "image": {
-          "type": "Group",
-          "config": {
-            "label": "Image",
-            "repeat": true,
-            "fields": {}
-          }
-        },
         "title": {
           "type": "Text",
           "config": {
             "label": "Title",
             "placeholder": ""
+          }
+        },
+        "images": {
+          "type": "Group",
+          "config": {
+            "label": "Images",
+            "repeat": true,
+            "fields": {
+              "image": {
+                "type": "Image",
+                "config": {
+                  "label": "Image",
+                  "constraint": {},
+                  "thumbnails": []
+                }
+              }
+            }
           }
         }
       },

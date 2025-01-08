@@ -68,26 +68,24 @@ export type HomeDocument<Lang extends string = string> =
 export type AllDocumentTypes = HomeDocument;
 
 /**
- * Item in *PhotographySet → Default → Primary → Image*
+ * Item in *PhotographySet → Default → Primary → Images*
  */
-export interface PhotographySetSliceDefaultPrimaryImageItem {}
+export interface PhotographySetSliceDefaultPrimaryImagesItem {
+  /**
+   * Image field in *PhotographySet → Default → Primary → Images*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: photography_set.default.primary.images[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+}
 
 /**
  * Primary content in *PhotographySet → Default → Primary*
  */
 export interface PhotographySetSliceDefaultPrimary {
-  /**
-   * Image field in *PhotographySet → Default → Primary*
-   *
-   * - **Field Type**: Group
-   * - **Placeholder**: *None*
-   * - **API ID Path**: photography_set.default.primary.image[]
-   * - **Documentation**: https://prismic.io/docs/field#group
-   */
-  image: prismic.GroupField<
-    Simplify<PhotographySetSliceDefaultPrimaryImageItem>
-  >;
-
   /**
    * Title field in *PhotographySet → Default → Primary*
    *
@@ -97,6 +95,18 @@ export interface PhotographySetSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   title: prismic.KeyTextField;
+
+  /**
+   * Images field in *PhotographySet → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: photography_set.default.primary.images[]
+   * - **Documentation**: https://prismic.io/docs/field#group
+   */
+  images: prismic.GroupField<
+    Simplify<PhotographySetSliceDefaultPrimaryImagesItem>
+  >;
 }
 
 /**
@@ -155,7 +165,7 @@ declare module "@prismicio/client" {
       HomeDocumentDataSlicesSlice,
       AllDocumentTypes,
       PhotographySetSlice,
-      PhotographySetSliceDefaultPrimaryImageItem,
+      PhotographySetSliceDefaultPrimaryImagesItem,
       PhotographySetSliceDefaultPrimary,
       PhotographySetSliceVariation,
       PhotographySetSliceDefault,
