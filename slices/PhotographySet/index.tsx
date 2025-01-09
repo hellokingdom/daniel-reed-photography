@@ -169,6 +169,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                 >
                   <PrismicNextImage
                     field={item.image}
+                    fallbackAlt=""
                     className={`object-contain w-full h-full block ${
                       aspectRatios[index] === 'landscape' ? '' : ''
                     }`}

@@ -15,10 +15,10 @@ export default async function Page() {
         <div>about</div>
         <div>danielreed.photography</div>
       </header>
-      <div className="p-2 laptop:p-4 flex flex-col laptop:gap-y-8 gap-y-4">
+      <div className="p-2 laptop:p-2 flex flex-col laptop:gap-y-2 gap-y-2">
         <SliceZone slices={page.data.slices} components={components} />
       </div>
-      <div className="fixed w-full h-full z-50 inset-0 pointer-events-none p-8 hidden laptop:flex">
+      <div className="fixed w-full h-full z-50 inset-0 pointer-events-none p-2 hidden laptop:flex">
         <div className="w-1/2 h-full flex flex-col justify-center items-start">
           <BloomText />
         </div>
