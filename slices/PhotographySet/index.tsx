@@ -48,7 +48,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
 
   useEffect(() => {
     if (inView) {
-      setBloomText(`${slice.primary.title} [ ${current}/${count} ]`)
+      setBloomText(`${slice.primary.title} ${current}/${count}`)
     }
   }, [inView, current, count, setBloomText, slice.primary.title])
 
