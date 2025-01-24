@@ -7,7 +7,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
-import { bloomTextAtom } from '@/atoms/bloomTextAtom'
+import { BloomTextAtom } from '@/atoms/BloomTextAtom'
 import { useAtom } from 'jotai/react'
 
 export type PhotographySetProps =
@@ -16,7 +16,7 @@ export type PhotographySetProps =
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
 
-  const [, setBloomText] = useAtom(bloomTextAtom)
+  const [, setBloomText] = useAtom(BloomTextAtom)
 
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
@@ -26,7 +26,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const portraitWidthRef = useRef<number | null>(null)
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
-  const [cursorClass, setCursorClass] = useState('cursor-e-resize')
+  const [, setCursorClass] = useState('cursor-e-resize')
 
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, {
@@ -54,18 +54,6 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       })
     }
   }, [inView, current, count, setBloomText, slice.primary.title])
-
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const { clientX, currentTarget } = event
-    const { left, width } = currentTarget.getBoundingClientRect()
-    const clickPosition = clientX - left
-
-    if (clickPosition < width / 2) {
-      emblaApi?.scrollPrev()
-    } else {
-      emblaApi?.scrollNext()
-    }
-  }
 
   const handleImageLoad = (index: number, img: HTMLImageElement) => {
     setAspectRatios((prevRatios: Array<'portrait' | 'landscape'>) => {

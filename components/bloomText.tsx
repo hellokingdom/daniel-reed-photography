@@ -1,10 +1,10 @@
 'use client'
 
 import { useAtom } from 'jotai'
-import { bloomTextAtom } from '@/atoms/bloomTextAtom'
+import { BloomTextAtom } from '@/atoms/BloomTextAtom'
 
 export function BloomText() {
-  const [bloomText] = useAtom(bloomTextAtom)
+  const [bloomText] = useAtom(BloomTextAtom)
   return (
     <div className="flex gap-x-4">
       <span>{bloomText.text}</span>
