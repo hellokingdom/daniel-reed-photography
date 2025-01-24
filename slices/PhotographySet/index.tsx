@@ -131,7 +131,15 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                     <PrismicNextImage
                       field={item.image}
                       fallbackAlt=""
-                      className="object-contain w-full h-full relative block"
+                      className="object-contain w-full h-full relative block opacity-0 transition-opacity duration-500"
+                      onLoad={(e) => {
+                        ;(e.target as HTMLImageElement).classList.remove(
+                          'opacity-0'
+                        )
+                        ;(e.target as HTMLImageElement).classList.add(
+                          'opacity-100'
+                        )
+                      }}
                     />
                   </div>
                 </div>
