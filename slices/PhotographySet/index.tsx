@@ -9,6 +9,31 @@ import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { BloomTextAtom } from '@/atoms/BloomTextAtom'
 import { useAtom } from 'jotai/react'
+import { blurHashToDataURL } from '@/utils/blurHashToData'
+import { PrismicBlurImageWrapper } from '@/components/PrismicBlurImageWrapper'
+
+function BlurHashImg({ hash }: { hash: string }) {
+  const base64 = blurHashToDataURL(hash)
+  return (
+    base64 && (
+      <div className="absolute inset-0">
+        <img
+          src={base64}
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            border: 0,
+          }}
+        />
+        <div className="absolute inset-0 backdrop-blur-2xl"></div>
+      </div>
+    )
+  )
+}
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
@@ -151,17 +176,22 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                     className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10"
                     onClick={() => emblaApi?.scrollNext()}
                   />
-                  <PrismicNextImage
-                    field={item.image}
-                    fallbackAlt=""
-                    className={`object-contain w-full h-full block ${
+                  <div
+                    className={`w-full h-full block ${
                       aspectRatios[index] === 'landscape' ? '' : ''
                     }`}
-                    style={{ visibility: 'hidden' }}
-                    onLoad={(e) =>
-                      handleImageLoad(index, e.target as HTMLImageElement)
-                    }
-                  />
+                  >
+                    <PrismicBlurImageWrapper field={item.image} />
+                    <PrismicNextImage
+                      field={item.image}
+                      fallbackAlt=""
+                      className="object-contain w-full h-full block relative"
+                      style={{ visibility: 'hidden' }}
+                      onLoad={(e) =>
+                        handleImageLoad(index, e.target as HTMLImageElement)
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             ))}
