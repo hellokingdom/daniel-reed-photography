@@ -1,7 +1,7 @@
 'use client'
 
 import { showAboutAtom } from '@/atoms/about'
-import { BloomText } from '@/components/BloomText'
+import { Text } from '@/components/Text'
 import { useAtom } from 'jotai'
 
 export function Info() {
@@ -9,7 +9,7 @@ export function Info() {
   return (
     <div className="fixed w-full h-full z-50 inset-0 pointer-events-none p-2 hidden laptop:flex">
       <div className="w-1/2 h-full flex flex-col justify-center items-start">
-        <BloomText />
+        <Text />
       </div>
       <div className="w-1/2 h-full flex flex-col justify-center items-end">
         <div className="flex gap-x-4">

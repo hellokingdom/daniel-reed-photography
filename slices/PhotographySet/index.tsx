@@ -7,7 +7,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
-import { bloomTextAtom } from '@/atoms/BloomTextAtom'
+import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
 
 export type PhotographySetProps =
@@ -16,7 +16,7 @@ export type PhotographySetProps =
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
 
-  const [, setBloomText] = useAtom(bloomTextAtom)
+  const [, setText] = useAtom(textAtom)
 
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
@@ -45,12 +45,12 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
 
   useEffect(() => {
     if (inView) {
-      setBloomText({
+      setText({
         text: `${slice.primary.title}`,
         position: `${current}/${count}`,
       })
     }
-  }, [inView, current, count, setBloomText, slice.primary.title])
+  }, [inView, current, count, setText, slice.primary.title])
 
   useEffect(() => {
     const updateContainerWidth = () => {
