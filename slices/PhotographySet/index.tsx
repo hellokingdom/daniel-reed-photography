@@ -26,7 +26,6 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const portraitWidthRef = useRef<number | null>(null)
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
-  const [, setCursorClass] = useState('cursor-e-resize')
 
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, {
