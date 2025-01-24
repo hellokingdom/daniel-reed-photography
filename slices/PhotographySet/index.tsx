@@ -7,7 +7,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
 import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
-import { BloomTextAtom } from '@/atoms/BloomTextAtom'
+import { bloomTextAtom } from '@/atoms/BloomTextAtom'
 import { useAtom } from 'jotai/react'
 
 export type PhotographySetProps =
@@ -16,7 +16,7 @@ export type PhotographySetProps =
 const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
 
-  const [, setBloomText] = useAtom(BloomTextAtom)
+  const [, setBloomText] = useAtom(bloomTextAtom)
 
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
