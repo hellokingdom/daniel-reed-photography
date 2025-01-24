@@ -144,11 +144,11 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                   }}
                 >
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-1/4 cursor-w-resize z-10"
+                    className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10"
                     onClick={() => emblaApi?.scrollPrev()}
                   />
                   <div
-                    className="absolute right-0 top-0 bottom-0 w-1/4 cursor-e-resize z-10"
+                    className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10"
                     onClick={() => emblaApi?.scrollNext()}
                   />
                   <PrismicNextImage
