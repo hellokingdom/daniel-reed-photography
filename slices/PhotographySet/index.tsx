@@ -9,7 +9,6 @@ import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { BloomTextAtom } from '@/atoms/BloomTextAtom'
 import { useAtom } from 'jotai/react'
-import { PrismicBlurImageWrapper } from '@/components/PrismicBlurImageWrapper'
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
