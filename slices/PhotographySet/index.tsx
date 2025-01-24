@@ -25,6 +25,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
 
   const ref = useRef<HTMLDivElement | null>(null)
+
   const inView = useInView(ref, {
     amount: 0.5,
   })
