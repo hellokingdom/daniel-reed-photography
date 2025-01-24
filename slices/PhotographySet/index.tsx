@@ -1,6 +1,6 @@
 'use client'
 
-import { Content } from '@prismicio/client'
+import { Content, ImageFieldImage } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
 import { SliceComponentProps } from '@prismicio/react'
 import useEmblaCarousel from 'embla-carousel-react'
@@ -21,10 +21,7 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
 
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
-  const [aspectRatios, setAspectRatios] = useState<
-    Array<'portrait' | 'landscape'>
-  >(Array(slice.primary.images.length).fill('portrait'))
-  const portraitWidthRef = useRef<number | null>(null)
+
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
 
@@ -55,36 +52,6 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     }
   }, [inView, current, count, setBloomText, slice.primary.title])
 
-  const handleImageLoad = (index: number, img: HTMLImageElement) => {
-    setAspectRatios((prevRatios: Array<'portrait' | 'landscape'>) => {
-      const newRatios = [...prevRatios]
-      newRatios[index] =
-        img.naturalWidth > img.naturalHeight ? 'landscape' : 'portrait'
-      return newRatios
-    })
-
-    // Measure the width of a portrait image or use the first image as a fallback
-    if (portraitWidthRef.current === null) {
-      portraitWidthRef.current = img.clientWidth
-    }
-
-    // Fade in the image after it has been loaded
-    setTimeout(() => {
-      img.style.opacity = '1'
-    }, 1)
-  }
-
-  useEffect(() => {
-    // Update landscape images' max height when portrait width is known
-    if (portraitWidthRef.current !== null) {
-      const landscapeImages = document.querySelectorAll('.landscape-image')
-      landscapeImages.forEach((image) => {
-        ;(image as HTMLImageElement).style.maxHeight =
-          `${portraitWidthRef.current}px`
-      })
-    }
-  }, [aspectRatios])
-
   useEffect(() => {
     const updateContainerWidth = () => {
       if (measuringContainerRef.current) {
@@ -102,6 +69,14 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       window.removeEventListener('resize', updateContainerWidth)
     }
   }, [])
+
+  function getAspectRatio(image: ImageFieldImage) {
+    return image.dimensions?.width && image.dimensions?.height
+      ? image.dimensions.width > image.dimensions.height
+        ? 'landscape'
+        : 'portrait'
+      : 'portrait'
+  }
 
   return (
     <>
@@ -129,17 +104,17 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
               >
                 <div
                   className={`relative flex items-center justify-center ${
-                    aspectRatios[index] === 'portrait'
+                    getAspectRatio(item.image) === 'portrait'
                       ? `aspect-[3/4]`
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
                     width:
-                      aspectRatios[index] === 'portrait'
+                      getAspectRatio(item.image) === 'portrait'
                         ? (containerWidth ?? 'auto')
                         : 'auto',
                     height:
-                      aspectRatios[index] === 'landscape'
+                      getAspectRatio(item.image) === 'landscape'
                         ? (containerWidth ?? 'auto')
                         : 'auto',
                   }}
@@ -152,20 +127,11 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                     className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10"
                     onClick={() => emblaApi?.scrollNext()}
                   />
-                  <div
-                    className={`w-full h-full block ${
-                      aspectRatios[index] === 'landscape' ? '' : ''
-                    }`}
-                  >
-                    <PrismicBlurImageWrapper field={item.image} />
+                  <div className="w-full h-full block">
                     <PrismicNextImage
                       field={item.image}
                       fallbackAlt=""
-                      className="object-contain w-full h-full block relative duration-200 transition-all will-change-transform"
-                      style={{ opacity: 0 }}
-                      onLoad={(e) =>
-                        handleImageLoad(index, e.target as HTMLImageElement)
-                      }
+                      className="object-contain w-full h-full relative block"
                     />
                   </div>
                 </div>

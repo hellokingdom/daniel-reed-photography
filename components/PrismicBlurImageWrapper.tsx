@@ -22,6 +22,8 @@ export function PrismicBlurImageWrapper({
       }
     }
 
+    console.log('fetching hash for ', field.url)
+
     fetchHash()
   }, [field.url])
 

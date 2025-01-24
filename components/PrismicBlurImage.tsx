@@ -33,7 +33,7 @@ function BlurHashImg({ hash }: { hash: string }) {
             border: 0,
           }}
         />
-        <div className="absolute inset-0 backdrop-blur-2xl"></div>
+        <div className="absolute inset-0"></div>
       </div>
     )
   )
