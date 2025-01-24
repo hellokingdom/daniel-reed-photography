@@ -9,31 +9,7 @@ import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { BloomTextAtom } from '@/atoms/BloomTextAtom'
 import { useAtom } from 'jotai/react'
-import { blurHashToDataURL } from '@/utils/blurHashToData'
 import { PrismicBlurImageWrapper } from '@/components/PrismicBlurImageWrapper'
-
-function BlurHashImg({ hash }: { hash: string }) {
-  const base64 = blurHashToDataURL(hash)
-  return (
-    base64 && (
-      <div className="absolute inset-0">
-        <img
-          src={base64}
-          alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            border: 0,
-          }}
-        />
-        <div className="absolute inset-0 backdrop-blur-2xl"></div>
-      </div>
-    )
-  )
-}
 
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
@@ -92,9 +68,9 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
       portraitWidthRef.current = img.clientWidth
     }
 
-    // Make the image visible after it has been loaded
+    // Fade in the image after it has been loaded
     setTimeout(() => {
-      img.style.visibility = 'visible'
+      img.style.opacity = '1'
     }, 1)
   }
 
@@ -185,8 +161,8 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                     <PrismicNextImage
                       field={item.image}
                       fallbackAlt=""
-                      className="object-contain w-full h-full block relative"
-                      style={{ visibility: 'hidden' }}
+                      className="object-contain w-full h-full block relative duration-200 transition-all will-change-transform"
+                      style={{ opacity: 0 }}
                       onLoad={(e) =>
                         handleImageLoad(index, e.target as HTMLImageElement)
                       }
