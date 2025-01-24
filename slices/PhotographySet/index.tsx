@@ -142,15 +142,13 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
         data-section-name={slice.primary.title}
         data-total-slides={count}
         data-current-slide={current}
-        onClick={handleClick}
-        onMouseMove={handleMouseMove}
-        className={`${cursorClass} user-select-none`}
+        className="user-select-none"
       >
-        <div className="embla pointer-events-none" ref={emblaRef}>
+        <div className="embla relative" ref={emblaRef}>
           <div className="embla__container">
             {slice.primary.images.map((item, index) => (
               <div
-                className="embla__slide flex items-center justify-center"
+                className="embla__slide flex items-center justify-center relative"
                 key={`${slice.primary.title}-${index}`}
               >
                 <div
@@ -170,6 +168,14 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                         : 'auto',
                   }}
                 >
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1/4 cursor-w-resize z-10"
+                    onClick={() => emblaApi?.scrollPrev()}
+                  />
+                  <div
+                    className="absolute right-0 top-0 bottom-0 w-1/4 cursor-e-resize z-10"
+                    onClick={() => emblaApi?.scrollNext()}
+                  />
                   <PrismicNextImage
                     field={item.image}
                     fallbackAlt=""
