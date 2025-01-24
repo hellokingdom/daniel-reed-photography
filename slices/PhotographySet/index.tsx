@@ -103,18 +103,6 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
     }
   }, [])
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const { clientX, currentTarget } = event
-    const { left, width } = currentTarget.getBoundingClientRect()
-    const hoverPosition = clientX - left
-
-    if (hoverPosition < width / 2) {
-      setCursorClass('cursor-w-resize')
-    } else {
-      setCursorClass('cursor-e-resize')
-    }
-  }
-
   return (
     <>
       <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
