@@ -22,6 +22,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
 
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
+  const [containerHeight, setContainerHeight] = useState<number | null>(null)
 
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -45,11 +46,20 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       }
     }
 
+    const updateContainerHeight = () => {
+      if (measuringContainerRef.current) {
+        setContainerHeight(measuringContainerRef.current.clientHeight)
+      }
+    }
+
     window.addEventListener('resize', updateContainerWidth)
+    window.addEventListener('resize', updateContainerHeight)
     updateContainerWidth()
+    updateContainerHeight()
 
     return () => {
       window.removeEventListener('resize', updateContainerWidth)
+      window.removeEventListener('resize', updateContainerHeight)
     }
   }, [])
 
@@ -74,7 +84,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
         <div
           ref={measuringContainerRef}
-          className="aspect-[3/4] w-full laptop:w-auto laptop:h-[95%] desktop:h-[90%] user-select-none border border-blue-500"
+          className="aspect-[3/4] w-full laptop:w-auto laptop:h-[95%] desktop:h-[90%] user-select-none"
         ></div>
       </div>
       <section
@@ -82,8 +92,11 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         data-total-slides={images.length}
         data-current-slide={currentIndex + 1}
         className="user-select-none"
+        style={{
+          height: containerHeight ?? undefined,
+        }}
       >
-        <div className="relative overflow-hidden h-[90vh] border border-red-500">
+        <div className="relative overflow-hidden h-full w-full">
           <AnimatePresence mode="sync">
             <motion.div
               key={currentIndex}
@@ -92,7 +105,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
               data-slide
-              className="flex items-center justify-center basis-full inset-0 absolute"
+              className="flex items-center justify-center basis-full absolute inset-0"
             >
               <div
                 className={`relative flex items-center justify-center ${
