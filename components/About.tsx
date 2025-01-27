@@ -28,7 +28,7 @@ export function About() {
               Designer & Photographer, MCR.{' '}
               <a
                 href="mailto:hello@danielreed.photography"
-                className="hover:underline relative z-[60]"
+                className="hover:underline relative z-[60] hover:text-black/50"
                 onClick={(e) => e.stopPropagation()}
               >
                 hello@danielreed.photography
@@ -36,7 +36,7 @@ export function About() {
               ,{' '}
               <a
                 href="https://www.instagram.com/danielreed.photography"
-                className="hover:underline relative z-[60]"
+                className="relative z-[60] hover:text-black/50"
                 onClick={(e) => e.stopPropagation()}
               >
                 Instagram
@@ -58,7 +58,7 @@ export function About() {
           >
             <div className="flex gap-x-4">
               <div>Daniel Reed</div>
-              <a className="pointer-events-auto cursor-pointer text-black/50">
+              <a className="pointer-events-auto cursor-pointer hover:text-black/50">
                 About
               </a>
             </div>

@@ -7,16 +7,16 @@ export function Header() {
   const [showAbout, setShowAbout] = useAtom(showAboutAtom)
   return (
     <header className="flex justify-between items-center px-2 pt-6 laptop:hidden z-[60] relative">
+      <div>Daniel Reed</div>
       <a
         onClick={(e) => {
           e.stopPropagation()
           setShowAbout(!showAbout)
         }}
-        className="hover:underline cursor-pointer"
+        className="cursor-pointer hover:text-black/50"
       >
-        about
+        About
       </a>
-      <div>danielreed.photography</div>
     </header>
   )
 }

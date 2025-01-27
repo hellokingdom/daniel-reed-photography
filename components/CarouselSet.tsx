@@ -8,7 +8,6 @@ import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
-import Image from 'next/image'
 
 interface CarouselSetProps {
   images: {
@@ -16,29 +15,6 @@ interface CarouselSetProps {
   }[]
   title: string
   blurHashes?: (string | undefined)[]
-}
-
-function BlurHashImg({ hash }: { hash: string }) {
-  return (
-    hash && (
-      <div className="absolute inset-0 overflow-hidden">
-        <Image
-          src={hash}
-          alt=""
-          className="grayscale"
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            border: 0,
-          }}
-          fill
-        />
-      </div>
-    )
-  )
 }
 
 const CarouselSet = ({
@@ -149,9 +125,6 @@ const CarouselSet = ({
                     </>
                   )}
                   <div className="w-full h-full block">
-                    {containerWidth && (
-                      <BlurHashImg hash={blurHashes?.[index] ?? ''} />
-                    )}
                     <PrismicNextImage
                       field={item.image}
                       fallbackAlt=""

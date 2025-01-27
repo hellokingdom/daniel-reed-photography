@@ -15,7 +15,7 @@ export function Info() {
         <div className="flex gap-x-4">
           <div>Daniel Reed</div>
           <a
-            className=" pointer-events-auto cursor-pointer text-black/50"
+            className=" pointer-events-auto cursor-pointer hover:text-black/50"
             onClick={() => setShowAbout(true)}
           >
             About
