@@ -14,9 +14,14 @@ interface CarouselSetProps {
     image: ImageFieldImage
   }[]
   title: string
+  blurHashes?: (string | undefined)[]
 }
 
-const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
+const CarouselSet = ({
+  images,
+  title,
+  blurHashes,
+}: CarouselSetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
   const [, setText] = useAtom(textAtom)
   const [current, setCurrent] = useState(0)
@@ -123,6 +128,8 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     <PrismicNextImage
                       field={item.image}
                       fallbackAlt=""
+                      blurDataURL={blurHashes?.[index]}
+                      placeholder={blurHashes?.[index] ? 'blur' : undefined}
                       className="object-contain w-full h-full relative block opacity-0 transition-opacity duration-500"
                       onLoad={(e) => {
                         ;(e.target as HTMLImageElement).classList.remove(

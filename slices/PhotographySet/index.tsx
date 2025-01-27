@@ -6,11 +6,32 @@ import CarouselSet from '@/components/CarouselSet'
 export type PhotographySetProps =
   SliceComponentProps<Content.PhotographySetSlice>
 
-const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
+async function getBlurHash(url: string | null | undefined) {
+  if (!url) return undefined
+  try {
+    const res = await fetch(`${url}&fm=blurhash`, {
+      next: { revalidate: false },
+    })
+    const hash = await res.text()
+    return hash
+  } catch (error) {
+    console.error('An error occurred while fetching the image hash:', error)
+    return undefined
+  }
+}
+
+const PhotographySet = async ({
+  slice,
+}: PhotographySetProps): Promise<JSX.Element> => {
+  const blurHashes = await Promise.all(
+    slice.primary.images.map((item) => getBlurHash(item.image.url))
+  )
+
   return (
     <CarouselSet
       images={slice.primary.images}
       title={slice.primary.title ?? ''}
+      blurHashes={blurHashes}
     />
   )
 }
