@@ -18,7 +18,7 @@ interface CarouselSetProps {
 
 const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState<Record<number, boolean>>({})
   const [, setText] = useAtom(textAtom)
 
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
@@ -39,9 +39,10 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       setText({
         text: title,
         position: `${currentIndex + 1}/${images.length}`,
+        isLoaded: isLoaded[currentIndex] || false,
       })
     }
-  }, [inView, currentIndex, images.length, setText, title])
+  }, [inView, currentIndex, images.length, setText, title, isLoaded])
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -83,6 +84,10 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
+  const handleImageLoad = (index: number) => {
+    setIsLoaded((prev) => ({ ...prev, [index]: true }))
+  }
+
   return (
     <>
       <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2">
@@ -102,8 +107,16 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       >
         {/* Hidden prefetch images */}
         <div className="opacity-0 absolute inset-0 pointer-events-none">
-          <PrismicNextImage field={images[prevIndex].image} fallbackAlt="" />
-          <PrismicNextImage field={images[nextIndex].image} fallbackAlt="" />
+          <PrismicNextImage
+            field={images[prevIndex].image}
+            fallbackAlt=""
+            onLoad={() => handleImageLoad(prevIndex)}
+          />
+          <PrismicNextImage
+            field={images[nextIndex].image}
+            fallbackAlt=""
+            onLoad={() => handleImageLoad(nextIndex)}
+          />
         </div>
 
         <div className="relative overflow-hidden h-full w-full">
@@ -112,7 +125,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
               <motion.div
                 key={currentIndex}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: isLoaded ? 1 : 0 }}
+                animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5, ease: 'easeInOut' }}
                 data-slide
@@ -145,7 +158,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     fallbackAlt=""
                     priority
                     className="object-contain w-full h-full relative block"
-                    onLoad={() => setIsLoaded(true)}
+                    onLoad={() => handleImageLoad(currentIndex)}
                   />
                 </div>
               </motion.div>
