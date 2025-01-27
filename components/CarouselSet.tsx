@@ -8,6 +8,7 @@ import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
+import { motion } from 'motion/react'
 
 interface CarouselSetProps {
   images: {
@@ -17,11 +18,7 @@ interface CarouselSetProps {
   blurHashes?: (string | undefined)[]
 }
 
-const CarouselSet = ({
-  images,
-  title,
-  blurHashes,
-}: CarouselSetProps): JSX.Element => {
+const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
   const [, setText] = useAtom(textAtom)
   const [current, setCurrent] = useState(0)
@@ -124,23 +121,22 @@ const CarouselSet = ({
                       />
                     </>
                   )}
-                  <div className="w-full h-full block">
-                    <PrismicNextImage
-                      field={item.image}
-                      fallbackAlt=""
-                      blurDataURL={blurHashes?.[index]}
-                      placeholder={blurHashes?.[index] ? 'blur' : undefined}
-                      className="object-contain w-full h-full relative block opacity-0 transition-opacity duration-1000"
-                      onLoad={(e) => {
-                        ;(e.target as HTMLImageElement).classList.remove(
-                          'opacity-0'
-                        )
-                        ;(e.target as HTMLImageElement).classList.add(
-                          'opacity-100'
-                        )
-                      }}
-                    />
-                  </div>
+
+                  {containerWidth && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1 }}
+                      className="w-full h-full block"
+                      key={`${title}-${index}`}
+                    >
+                      <PrismicNextImage
+                        field={item.image}
+                        fallbackAlt=""
+                        className="object-contain w-full h-full relative block"
+                      />
+                    </motion.div>
+                  )}
                 </div>
               </div>
             ))}
