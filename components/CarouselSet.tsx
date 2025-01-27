@@ -114,7 +114,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isLoaded ? 1 : 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
                 data-slide
                 className="flex items-center justify-center basis-full absolute inset-0"
               >
