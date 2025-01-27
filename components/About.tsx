@@ -17,11 +17,14 @@ export function About() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed w-full h-full z-50 inset-0 p-2 bg-white flex cursor-pointer"
+          className="fixed w-full h-full z-50 inset-0 p-2 bg-white flex justify-between cursor-pointer"
           onClick={() => setShowAbout(false)}
         >
-          <div className="w-1/2 h-full flex flex-col justify-center items-start">
-            <div className="text-nowrap">
+          <div
+            data-column="left"
+            className="tablet:flex-1 h-full flex flex-col justify-center items-start pr-4 w-10/12 tablet:w-auto"
+          >
+            <div className="tablet:text-nowrap laptop:text-wrap">
               Designer & Photographer, MCR.{' '}
               <a
                 href="mailto:hello@danielreed.photography"
@@ -41,15 +44,21 @@ export function About() {
               .
             </div>
           </div>
-          <div className="flex-1 h-full flex flex-col justify-center items-end">
+          <div
+            data-column="middle"
+            className="h-full laptop:flex flex-col justify-center items-end hidden"
+          >
             <div className="bg-blue-500 aspect-[394/524] desktop:w-[394px] laptop:w-[326px] hidden laptop:block relative">
               <Image src={img} fill alt="Daniel Reed" placeholder="blur" />
             </div>
           </div>
-          <div className="w-1/2 h-full flex flex-col justify-center items-end">
+          <div
+            data-column="right"
+            className="flex-1 h-full tablet:flex flex-col justify-center items-end pl-4 hidden"
+          >
             <div className="flex gap-x-4">
               <div>Daniel Reed</div>
-              <a className=" pointer-events-auto cursor-pointer text-black/50">
+              <a className="pointer-events-auto cursor-pointer text-black/50">
                 About
               </a>
             </div>
