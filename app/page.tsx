@@ -14,7 +14,7 @@ export default async function Page() {
   return (
     <>
       <Header />
-      <div className="p-2 laptop:p-2 flex flex-col laptop:gap-y-2 gap-y-2">
+      <div className="p-2 laptop:p-2 flex flex-col laptop:gap-y-2 gap-y-2 overflow-hidden">
         <SliceZone slices={page.data.slices} components={components} />
       </div>
       <Info />

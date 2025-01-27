@@ -2,13 +2,11 @@
 
 import { ImageFieldImage } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
-import useEmblaCarousel from 'embla-carousel-react'
 import { JSX, useState, useEffect, useRef } from 'react'
-import Fade from 'embla-carousel-fade'
 import { useInView } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface CarouselSetProps {
   images: {
@@ -19,13 +17,13 @@ interface CarouselSetProps {
 }
 
 const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoaded, setIsLoaded] = useState<Record<number, boolean>>({})
   const [, setText] = useAtom(textAtom)
-  const [current, setCurrent] = useState(0)
-  const [count, setCount] = useState(0)
 
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
+  const [containerHeight, setContainerHeight] = useState<number | null>(null)
 
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -33,27 +31,18 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
     amount: 0.5,
   })
 
-  useEffect(() => {
-    if (!emblaApi) {
-      return
-    }
-
-    setCount(emblaApi.scrollSnapList().length)
-    setCurrent(emblaApi.selectedScrollSnap() + 1)
-
-    emblaApi.on('select', () => {
-      setCurrent(emblaApi.selectedScrollSnap() + 1)
-    })
-  }, [emblaApi])
+  const nextIndex = (currentIndex + 1) % images.length
+  const prevIndex = (currentIndex - 1 + images.length) % images.length
 
   useEffect(() => {
     if (inView) {
       setText({
         text: title,
-        position: `${current}/${count}`,
+        position: `${currentIndex + 1}/${images.length}`,
+        isLoaded: isLoaded[currentIndex] || false,
       })
     }
-  }, [inView, current, count, setText, title])
+  }, [inView, currentIndex, images.length, setText, title, isLoaded])
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -62,11 +51,20 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       }
     }
 
+    const updateContainerHeight = () => {
+      if (measuringContainerRef.current) {
+        setContainerHeight(measuringContainerRef.current.clientHeight)
+      }
+    }
+
     window.addEventListener('resize', updateContainerWidth)
+    window.addEventListener('resize', updateContainerHeight)
     updateContainerWidth()
+    updateContainerHeight()
 
     return () => {
       window.removeEventListener('resize', updateContainerWidth)
+      window.removeEventListener('resize', updateContainerHeight)
     }
   }, [])
 
@@ -76,6 +74,18 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         ? 'landscape'
         : 'portrait'
       : 'portrait'
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length)
+  }
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+  }
+
+  const handleImageLoad = (index: number) => {
+    setIsLoaded((prev) => ({ ...prev, [index]: true }))
   }
 
   return (
@@ -88,20 +98,42 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       </div>
       <section
         ref={ref}
-        data-total-slides={count}
-        data-current-slide={current}
-        className="user-select-none"
+        data-total-slides={images.length}
+        data-current-slide={currentIndex + 1}
+        className="user-select-none relative"
+        style={{
+          height: containerHeight ?? undefined,
+        }}
       >
-        <div className="embla relative" ref={emblaRef}>
-          <div className="embla__container">
-            {images.map((item, index) => (
-              <div
-                className="embla__slide flex items-center justify-center relative"
-                key={`${title}-${index}`}
+        {/* Hidden prefetch images */}
+        <div className="opacity-0 absolute inset-0 pointer-events-none">
+          <PrismicNextImage
+            field={images[prevIndex].image}
+            fallbackAlt=""
+            onLoad={() => handleImageLoad(prevIndex)}
+          />
+          <PrismicNextImage
+            field={images[nextIndex].image}
+            fallbackAlt=""
+            onLoad={() => handleImageLoad(nextIndex)}
+          />
+        </div>
+
+        <div className="relative overflow-hidden h-full w-full">
+          <AnimatePresence mode="sync">
+            {containerWidth && (
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+                data-slide
+                className="flex items-center justify-center basis-full absolute inset-0"
               >
                 <div
                   className={`relative flex items-center justify-center ${
-                    getAspectRatio(item.image) === 'portrait'
+                    getAspectRatio(images[currentIndex].image) === 'portrait'
                       ? `aspect-[3/4]`
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
@@ -113,34 +145,25 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     <>
                       <div
                         className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                        onClick={() => emblaApi?.scrollPrev()}
+                        onClick={handlePrev}
                       />
                       <div
                         className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                        onClick={() => emblaApi?.scrollNext()}
+                        onClick={handleNext}
                       />
                     </>
                   )}
-
-                  {containerWidth && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 1 }}
-                      className="w-full h-full block"
-                      key={`${title}-${index}`}
-                    >
-                      <PrismicNextImage
-                        field={item.image}
-                        fallbackAlt=""
-                        className="object-contain w-full h-full relative block"
-                      />
-                    </motion.div>
-                  )}
+                  <PrismicNextImage
+                    field={images[currentIndex].image}
+                    fallbackAlt=""
+                    priority
+                    className="object-contain w-full h-full relative block"
+                    onLoad={() => handleImageLoad(currentIndex)}
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
     </>
