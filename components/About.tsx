@@ -21,7 +21,7 @@ export function About() {
           onClick={() => setShowAbout(false)}
         >
           <div className="w-1/2 h-full flex flex-col justify-center items-start">
-            <div className="text-sm">
+            <div className="text-nowrap">
               Designer & Photographer, MCR.{' '}
               <a
                 href="mailto:hello@danielreed.photography"
@@ -42,7 +42,7 @@ export function About() {
             </div>
           </div>
           <div className="flex-1 h-full flex flex-col justify-center items-end">
-            <div className="bg-blue-500 aspect-[394/524] w-[394px] relative">
+            <div className="bg-blue-500 aspect-[394/524] desktop:w-[394px] laptop:w-[326px] hidden laptop:block relative">
               <Image src={img} fill alt="Daniel Reed" placeholder="blur" />
             </div>
           </div>
