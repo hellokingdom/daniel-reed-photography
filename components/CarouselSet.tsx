@@ -30,6 +30,9 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
     amount: 0.5,
   })
 
+  const nextIndex = (currentIndex + 1) % images.length
+  const prevIndex = (currentIndex - 1 + images.length) % images.length
+
   useEffect(() => {
     if (inView) {
       setText({
@@ -96,6 +99,12 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           height: containerHeight ?? undefined,
         }}
       >
+        {/* Hidden prefetch images */}
+        <div className="hidden">
+          <PrismicNextImage field={images[prevIndex].image} fallbackAlt="" />
+          <PrismicNextImage field={images[nextIndex].image} fallbackAlt="" />
+        </div>
+
         <div className="relative overflow-hidden h-full w-full">
           <AnimatePresence mode="sync">
             <motion.div
@@ -133,6 +142,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                   <PrismicNextImage
                     field={images[currentIndex].image}
                     fallbackAlt=""
+                    priority
                     className="object-contain w-full h-full relative block"
                   />
                 )}
