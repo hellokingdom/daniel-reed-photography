@@ -105,25 +105,11 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           height: containerHeight ?? undefined,
         }}
       >
-        {/* Hidden prefetch images */}
-        <div className="opacity-0 absolute inset-0 pointer-events-none">
-          <PrismicNextImage
-            field={images[prevIndex].image}
-            fallbackAlt=""
-            onLoad={() => handleImageLoad(prevIndex)}
-          />
-          <PrismicNextImage
-            field={images[nextIndex].image}
-            fallbackAlt=""
-            onLoad={() => handleImageLoad(nextIndex)}
-          />
-        </div>
-
         <div className="relative overflow-hidden h-full w-full">
           <AnimatePresence mode="sync">
             {containerWidth && (
               <motion.div
-                key={currentIndex}
+                key={images[currentIndex].image.url}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
                 exit={{ opacity: 0 }}
@@ -155,10 +141,11 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                   )}
                   <PrismicNextImage
                     field={images[currentIndex].image}
+                    key={images[currentIndex].image.url}
                     fallbackAlt=""
-                    priority
                     className="object-contain w-full h-full relative block"
                     onLoad={() => handleImageLoad(currentIndex)}
+                    loading="lazy"
                   />
                 </div>
               </motion.div>
