@@ -31,9 +31,6 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
     amount: 0.5,
   })
 
-  const nextIndex = (currentIndex + 1) % images.length
-  const prevIndex = (currentIndex - 1 + images.length) % images.length
-
   useEffect(() => {
     if (inView) {
       setText({
