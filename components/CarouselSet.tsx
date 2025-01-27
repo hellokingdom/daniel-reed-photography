@@ -18,6 +18,7 @@ interface CarouselSetProps {
 
 const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
   const [, setText] = useAtom(textAtom)
 
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
@@ -94,60 +95,61 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         ref={ref}
         data-total-slides={images.length}
         data-current-slide={currentIndex + 1}
-        className="user-select-none"
+        className="user-select-none relative"
         style={{
           height: containerHeight ?? undefined,
         }}
       >
         {/* Hidden prefetch images */}
-        <div className="hidden">
+        <div className="opacity-0 absolute inset-0 pointer-events-none">
           <PrismicNextImage field={images[prevIndex].image} fallbackAlt="" />
           <PrismicNextImage field={images[nextIndex].image} fallbackAlt="" />
         </div>
 
         <div className="relative overflow-hidden h-full w-full">
           <AnimatePresence mode="sync">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              data-slide
-              className="flex items-center justify-center basis-full absolute inset-0"
-            >
-              <div
-                className={`relative flex items-center justify-center ${
-                  getAspectRatio(images[currentIndex].image) === 'portrait'
-                    ? `aspect-[3/4]`
-                    : 'aspect-[6/4] max-w-[100%]'
-                }`}
-                style={{
-                  width: containerWidth ?? undefined,
-                }}
+            {containerWidth && (
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isLoaded ? 1 : 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                data-slide
+                className="flex items-center justify-center basis-full absolute inset-0"
               >
-                {images.length > 1 && (
-                  <>
-                    <div
-                      className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                      onClick={handlePrev}
-                    />
-                    <div
-                      className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                      onClick={handleNext}
-                    />
-                  </>
-                )}
-                {containerWidth && (
+                <div
+                  className={`relative flex items-center justify-center ${
+                    getAspectRatio(images[currentIndex].image) === 'portrait'
+                      ? `aspect-[3/4]`
+                      : 'aspect-[6/4] max-w-[100%]'
+                  }`}
+                  style={{
+                    width: containerWidth ?? undefined,
+                  }}
+                >
+                  {images.length > 1 && (
+                    <>
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
+                        onClick={handlePrev}
+                      />
+                      <div
+                        className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
+                        onClick={handleNext}
+                      />
+                    </>
+                  )}
                   <PrismicNextImage
                     field={images[currentIndex].image}
                     fallbackAlt=""
                     priority
                     className="object-contain w-full h-full relative block"
+                    onLoad={() => setIsLoaded(true)}
                   />
-                )}
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </section>
