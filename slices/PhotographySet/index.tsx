@@ -109,24 +109,21 @@ const PhotographySet = ({ slice }: PhotographySetProps): JSX.Element => {
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
-                    width:
-                      getAspectRatio(item.image) === 'portrait'
-                        ? (containerWidth ?? 'auto')
-                        : 'auto',
-                    height:
-                      getAspectRatio(item.image) === 'landscape'
-                        ? (containerWidth ?? 'auto')
-                        : 'auto',
+                    width: containerWidth ?? undefined,
                   }}
                 >
-                  <div
-                    className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10"
-                    onClick={() => emblaApi?.scrollPrev()}
-                  />
-                  <div
-                    className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10"
-                    onClick={() => emblaApi?.scrollNext()}
-                  />
+                  {slice.primary.images.length > 1 && (
+                    <>
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
+                        onClick={() => emblaApi?.scrollPrev()}
+                      />
+                      <div
+                        className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
+                        onClick={() => emblaApi?.scrollNext()}
+                      />
+                    </>
+                  )}
                   <div className="w-full h-full block">
                     <PrismicNextImage
                       field={item.image}
