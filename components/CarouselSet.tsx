@@ -31,6 +31,9 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
     amount: 0.5,
   })
 
+  const nextIndex = (currentIndex + 1) % images.length
+  const prevIndex = (currentIndex - 1 + images.length) % images.length
+
   useEffect(() => {
     if (inView) {
       setText({
@@ -74,11 +77,15 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   }
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
+    if (isLoaded[nextIndex]) {
+      setCurrentIndex(nextIndex)
+    }
   }
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    if (isLoaded[prevIndex]) {
+      setCurrentIndex(prevIndex)
+    }
   }
 
   const handleImageLoad = (index: number) => {
@@ -103,51 +110,111 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         }}
       >
         <div className="relative overflow-hidden h-full w-full">
-          <AnimatePresence mode="sync">
-            {containerWidth && (
-              <motion.div
-                key={images[currentIndex].image.url}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-                data-slide
-                className="flex items-center justify-center basis-full absolute inset-0"
-              >
+          {containerWidth && (
+            <div className="absolute inset-0">
+              {/* Base layer - current image */}
+              <div className="absolute inset-0 flex items-center justify-center">
                 <div
-                  className={`relative flex items-center justify-center ${
+                  className={`${
                     getAspectRatio(images[currentIndex].image) === 'portrait'
                       ? `aspect-[3/4]`
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
-                    width: containerWidth ?? undefined,
+                    width:
+                      getAspectRatio(images[currentIndex].image) === 'portrait'
+                        ? (containerWidth ?? undefined)
+                        : (containerHeight ?? undefined),
                   }}
                 >
-                  {images.length > 1 && (
-                    <>
-                      <div
-                        className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                        onClick={handlePrev}
-                      />
-                      <div
-                        className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-10 opacity-0 hover:opacity-100 transition-opacity"
-                        onClick={handleNext}
-                      />
-                    </>
-                  )}
                   <PrismicNextImage
                     field={images[currentIndex].image}
-                    key={images[currentIndex].image.url}
                     fallbackAlt=""
                     className="object-contain w-full h-full relative block"
                     onLoad={() => handleImageLoad(currentIndex)}
-                    loading="lazy"
+                    sizes="100vw"
+                  />
+                  <PrismicNextImage
+                    field={images[nextIndex].image}
+                    fallbackAlt=""
+                    className="w-0 h-0"
+                    onLoad={() => handleImageLoad(nextIndex)}
+                    sizes="100vw"
                   />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+
+              {/* Overlay layer - animating images */}
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, ease: 'backInOut' }}
+                  className="absolute inset-0 flex items-center justify-center bg-white"
+                >
+                  <div
+                    className={`${
+                      getAspectRatio(images[currentIndex].image) === 'portrait'
+                        ? `aspect-[3/4]`
+                        : 'aspect-[6/4] max-w-[100%]'
+                    }`}
+                    style={{
+                      width:
+                        getAspectRatio(images[currentIndex].image) ===
+                        'portrait'
+                          ? (containerWidth ?? undefined)
+                          : (containerHeight ?? undefined),
+                    }}
+                  >
+                    <PrismicNextImage
+                      field={images[currentIndex].image}
+                      fallbackAlt=""
+                      className="object-contain w-full h-full relative block"
+                      sizes="100vw"
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Loading indicator */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-black"
+                  animate={{
+                    scale: !isLoaded[nextIndex] ? [1, 1.5, 1] : 1,
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat: !isLoaded[nextIndex] ? Infinity : 0,
+                    ease: 'easeInOut',
+                  }}
+                />
+              </div>
+
+              {images.length > 1 && (
+                <>
+                  <div
+                    className={`absolute left-0 top-0 bottom-0 w-1/2 ${
+                      isLoaded[prevIndex]
+                        ? 'cursor-w-resize'
+                        : 'cursor-w-resize'
+                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
+                    onClick={handlePrev}
+                  />
+                  <div
+                    className={`absolute right-0 top-0 bottom-0 w-1/2 ${
+                      isLoaded[nextIndex]
+                        ? 'cursor-e-resize'
+                        : 'cursor-e-resize'
+                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
+                    onClick={handleNext}
+                  />
+                </>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </>
