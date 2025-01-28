@@ -34,18 +34,6 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const nextIndex = (currentIndex + 1) % images.length
   const prevIndex = (currentIndex - 1 + images.length) % images.length
 
-  // Preload next and previous images
-  useEffect(() => {
-    const preloadImage = (index: number) => {
-      const img = new Image()
-      img.src = images[index].image.url || ''
-      img.onload = () => handleImageLoad(index)
-    }
-
-    preloadImage(nextIndex)
-    preloadImage(prevIndex)
-  }, [currentIndex, images])
-
   useEffect(() => {
     if (inView) {
       setText({
@@ -143,6 +131,12 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     onLoad={() => handleImageLoad(currentIndex)}
                     priority={currentIndex === 0}
                   />
+                  <PrismicNextImage
+                    field={images[nextIndex].image}
+                    fallbackAlt=""
+                    className="hidden"
+                    onLoad={() => handleImageLoad(nextIndex)}
+                  />
                 </div>
               </div>
 
@@ -181,17 +175,11 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                 <motion.div
                   className="w-2 h-2 rounded-full bg-black"
                   animate={{
-                    scale:
-                      !isLoaded[nextIndex] || !isLoaded[prevIndex]
-                        ? [1, 1.5, 1]
-                        : 1,
+                    scale: !isLoaded[nextIndex] ? [1, 1.5, 1] : 1,
                   }}
                   transition={{
                     duration: 1,
-                    repeat:
-                      !isLoaded[nextIndex] || !isLoaded[prevIndex]
-                        ? Infinity
-                        : 0,
+                    repeat: !isLoaded[nextIndex] ? Infinity : 0,
                     ease: 'easeInOut',
                   }}
                 />
@@ -203,7 +191,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     className={`absolute left-0 top-0 bottom-0 w-1/2 ${
                       isLoaded[prevIndex]
                         ? 'cursor-w-resize'
-                        : 'cursor-not-allowed'
+                        : 'cursor-w-resize'
                     } z-50 opacity-0 hover:opacity-100 transition-opacity`}
                     onClick={handlePrev}
                   />
@@ -211,7 +199,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     className={`absolute right-0 top-0 bottom-0 w-1/2 ${
                       isLoaded[nextIndex]
                         ? 'cursor-e-resize'
-                        : 'cursor-not-allowed'
+                        : 'cursor-e-resize'
                     } z-50 opacity-0 hover:opacity-100 transition-opacity`}
                     onClick={handleNext}
                   />
