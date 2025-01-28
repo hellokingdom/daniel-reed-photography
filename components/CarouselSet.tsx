@@ -176,14 +176,43 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                 </motion.div>
               </AnimatePresence>
 
+              {/* Loading indicator */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-black"
+                  animate={{
+                    scale:
+                      !isLoaded[nextIndex] || !isLoaded[prevIndex]
+                        ? [1, 1.5, 1]
+                        : 1,
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat:
+                      !isLoaded[nextIndex] || !isLoaded[prevIndex]
+                        ? Infinity
+                        : 0,
+                    ease: 'easeInOut',
+                  }}
+                />
+              </div>
+
               {images.length > 1 && (
                 <>
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+                    className={`absolute left-0 top-0 bottom-0 w-1/2 ${
+                      isLoaded[prevIndex]
+                        ? 'cursor-w-resize'
+                        : 'cursor-not-allowed'
+                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
                     onClick={handlePrev}
                   />
                   <div
-                    className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+                    className={`absolute right-0 top-0 bottom-0 w-1/2 ${
+                      isLoaded[nextIndex]
+                        ? 'cursor-e-resize'
+                        : 'cursor-not-allowed'
+                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
                     onClick={handleNext}
                   />
                 </>
