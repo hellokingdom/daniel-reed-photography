@@ -109,7 +109,13 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           height: containerHeight ?? undefined,
         }}
       >
-        <div className="relative overflow-hidden h-full w-full">
+        <motion.div
+          className="relative overflow-hidden h-full w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: 'backInOut' }}
+        >
           {containerWidth && (
             <div className="absolute inset-0">
               {/* Base layer - current image */}
@@ -215,7 +221,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
               )}
             </div>
           )}
-        </div>
+        </motion.div>
       </section>
     </>
   )
