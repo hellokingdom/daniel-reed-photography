@@ -121,7 +121,10 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
-                    width: containerWidth ?? undefined,
+                    width:
+                      getAspectRatio(images[currentIndex].image) === 'portrait'
+                        ? (containerWidth ?? undefined)
+                        : (containerHeight ?? undefined),
                   }}
                 >
                   <PrismicNextImage
@@ -129,13 +132,14 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                     fallbackAlt=""
                     className="object-contain w-full h-full relative block"
                     onLoad={() => handleImageLoad(currentIndex)}
-                    priority={currentIndex === 0}
+                    sizes="100vw"
                   />
                   <PrismicNextImage
                     field={images[nextIndex].image}
                     fallbackAlt=""
-                    className="hidden"
+                    className="w-0 h-0"
                     onLoad={() => handleImageLoad(nextIndex)}
+                    sizes="100vw"
                   />
                 </div>
               </div>
@@ -147,7 +151,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: 'backInOut' }}
+                  transition={{ duration: 0.5, ease: 'backInOut' }}
                   className="absolute inset-0 flex items-center justify-center bg-white"
                 >
                   <div
@@ -157,14 +161,18 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                         : 'aspect-[6/4] max-w-[100%]'
                     }`}
                     style={{
-                      width: containerWidth ?? undefined,
+                      width:
+                        getAspectRatio(images[currentIndex].image) ===
+                        'portrait'
+                          ? (containerWidth ?? undefined)
+                          : (containerHeight ?? undefined),
                     }}
                   >
                     <PrismicNextImage
                       field={images[currentIndex].image}
                       fallbackAlt=""
                       className="object-contain w-full h-full relative block"
-                      priority={currentIndex === 0}
+                      sizes="100vw"
                     />
                   </div>
                 </motion.div>
