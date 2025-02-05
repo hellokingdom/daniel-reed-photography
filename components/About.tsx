@@ -17,7 +17,7 @@ export function About() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed w-full h-full z-50 inset-0 p-2 bg-white flex justify-between cursor-pointer"
+          className="fixed w-full h-full z-50 inset-0 p-2 bg-black flex justify-between cursor-pointer"
           onClick={() => setShowAbout(false)}
         >
           <div

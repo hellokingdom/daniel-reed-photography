@@ -158,7 +158,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5, ease: 'backInOut' }}
-                  className="absolute inset-0 flex items-center justify-center bg-white"
+                  className="absolute inset-0 flex items-center justify-center bg-black"
                 >
                   <div
                     className={`${
