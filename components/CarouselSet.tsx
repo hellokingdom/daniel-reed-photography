@@ -24,25 +24,68 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [containerHeight, setContainerHeight] = useState<number | null>(null)
+  const [touchStartX, setTouchStartX] = useState(0)
+  const [touchStartY, setTouchStartY] = useState(0)
+  const [isSwiping, setIsSwiping] = useState(false)
 
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { amount: 0.5 })
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-      dragFree: false,
-    },
-    [Fade()]
-  )
+  const options = {
+    loop: true,
+    dragFree: false,
+  }
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, [Fade()])
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev()
+    if (emblaApi) {
+      emblaApi.scrollPrev()
+    }
   }, [emblaApi])
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext()
+    if (emblaApi) {
+      emblaApi.scrollNext()
+    }
   }, [emblaApi])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX)
+    setTouchStartY(e.touches[0].clientY)
+    setIsSwiping(false)
+  }, [])
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      const touchX = e.touches[0].clientX
+      const touchY = e.touches[0].clientY
+      const deltaX = Math.abs(touchX - touchStartX)
+      const deltaY = Math.abs(touchY - touchStartY)
+
+      // If horizontal movement is greater than vertical and exceeds threshold, it's a swipe
+      if (deltaX > deltaY && deltaX > 10) {
+        setIsSwiping(true)
+      }
+    },
+    [touchStartX, touchStartY]
+  )
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isSwiping) {
+        const touchEndX = e.changedTouches[0].clientX
+        const width = window.innerWidth
+
+        if (touchEndX < width / 2) {
+          scrollPrev()
+        } else {
+          scrollNext()
+        }
+      }
+    },
+    [isSwiping, scrollNext, scrollPrev]
+  )
 
   useEffect(() => {
     if (inView && emblaApi) {
@@ -106,7 +149,13 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           height: containerHeight ?? undefined,
         }}
       >
-        <div className="embla overflow-hidden h-full w-full" ref={emblaRef}>
+        <div
+          className="embla overflow-hidden h-full w-full"
+          ref={emblaRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="embla__container h-full">
             {images.map(({ image }, index) => (
               <div
@@ -139,18 +188,6 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
             ))}
           </div>
         </div>
-        {images.length > 1 && (
-          <>
-            <div
-              className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
-              onClick={scrollPrev}
-            />
-            <div
-              className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
-              onClick={scrollNext}
-            />
-          </>
-        )}
       </section>
     </>
   )
