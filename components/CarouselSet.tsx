@@ -25,8 +25,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
   const [containerHeight, setContainerHeight] = useState<number | null>(null)
   const [touchStartX, setTouchStartX] = useState(0)
-  const [touchStartY, setTouchStartY] = useState(0)
-  const [isSwiping, setIsSwiping] = useState(false)
+  const [touchStartTime, setTouchStartTime] = useState(0)
 
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { amount: 0.5 })
@@ -49,42 +48,36 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       emblaApi.scrollNext()
     }
   }, [emblaApi])
-
+  // Add these handlers for touch events
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX)
-    setTouchStartY(e.touches[0].clientY)
-    setIsSwiping(false)
+    setTouchStartTime(Date.now())
   }, [])
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      const touchX = e.touches[0].clientX
-      const touchY = e.touches[0].clientY
-      const deltaX = Math.abs(touchX - touchStartX)
-      const deltaY = Math.abs(touchY - touchStartY)
-
-      // If horizontal movement is greater than vertical and exceeds threshold, it's a swipe
-      if (deltaX > deltaY && deltaX > 10) {
-        setIsSwiping(true)
-      }
-    },
-    [touchStartX, touchStartY]
-  )
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent) => {
-      if (!isSwiping) {
-        const touchEndX = e.changedTouches[0].clientX
-        const width = window.innerWidth
+      const touchEndX = e.changedTouches[0].clientX
+      const touchEndTime = Date.now()
 
-        if (touchEndX < width / 2) {
+      // Calculate duration and distance
+      const duration = touchEndTime - touchStartTime
+      const distance = Math.abs(touchEndX - touchStartX)
+
+      // If it's a quick tap with minimal movement (not a swipe)
+      if (duration < 250 && distance < 10) {
+        const width = window.innerWidth
+        const tapPosition = touchEndX
+
+        // Determine if tap was on left or right side
+        if (tapPosition < width / 2) {
           scrollPrev()
         } else {
           scrollNext()
         }
       }
+      // If it's a swipe, Embla will handle it naturally
     },
-    [isSwiping, scrollNext, scrollPrev]
+    [scrollNext, scrollPrev, touchStartTime, touchStartX]
   )
 
   useEffect(() => {
@@ -153,7 +146,6 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           className="embla overflow-hidden h-full w-full"
           ref={emblaRef}
           onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           <div className="embla__container h-full">
