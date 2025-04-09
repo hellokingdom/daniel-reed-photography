@@ -8,6 +8,7 @@ import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
 import useEmblaCarousel from 'embla-carousel-react'
 import Fade from 'embla-carousel-fade'
+import { EmblaOptionsType } from 'embla-carousel'
 
 interface CarouselSetProps {
   images: {
@@ -30,9 +31,8 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { amount: 0.5 })
 
-  const options = {
+  const options: EmblaOptionsType = {
     loop: true,
-    dragFree: false,
   }
 
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Fade()])
@@ -67,8 +67,10 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         const tapPosition = touchEndX
 
         if (tapPosition < width / 2) {
+          console.log('scroll prev')
           scrollPrev()
         } else {
+          console.log('scroll next')
           scrollNext()
         }
       }
