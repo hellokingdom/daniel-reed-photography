@@ -191,12 +191,12 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         {images.length > 1 && (
           <>
             <button
-              className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+              className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-50 opacity-0 hover:opacity-100 transition-opacity hidden laptop:block"
               onClick={scrollPrev}
               aria-label="Previous slide"
             />
             <button
-              className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+              className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-50 opacity-0 hover:opacity-100 transition-opacity hidden laptop:block"
               onClick={scrollNext}
               aria-label="Next slide"
             />
