@@ -3,7 +3,7 @@
 import { ImageFieldImage } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
 import { JSX, useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { useInView } from 'framer-motion'
+import { useInView, motion } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
 import useEmblaCarousel from 'embla-carousel-react'
@@ -21,6 +21,7 @@ interface CarouselSetProps {
 const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [isLoaded, setIsLoaded] = useState<Record<number, boolean>>({})
   const [, setText] = useAtom(textAtom)
+  const [firstImageLoaded, setFirstImageLoaded] = useState(false)
 
   const measuringContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
@@ -137,7 +138,14 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   }
 
   const handleImageLoad = (index: number) => {
-    setIsLoaded((prev) => ({ ...prev, [index]: true }))
+    setIsLoaded((prev) => {
+      const newState = { ...prev, [index]: true }
+      // Set firstImageLoaded to true when the first image (index 0) loads
+      if (index === 0) {
+        setFirstImageLoaded(true)
+      }
+      return newState
+    })
   }
 
   return (
@@ -148,12 +156,15 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
           className="aspect-[3/4] w-full laptop:w-auto laptop:h-[95%] desktop:h-[90%] user-select-none"
         ></div>
       </div>
-      <section
+      <motion.section
         ref={ref}
         className="user-select-none relative"
         style={{
           height: containerHeight ?? undefined,
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: firstImageLoaded ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         <div
           className="embla overflow-hidden h-full w-full"
@@ -207,7 +218,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
             />
           </>
         )}
-      </section>
+      </motion.section>
     </>
   )
 }
