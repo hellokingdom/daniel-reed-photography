@@ -2,7 +2,7 @@
 
 import { ImageFieldImage } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
-import { JSX, useState, useEffect, useRef, useCallback } from 'react'
+import { JSX, useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useInView } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
@@ -31,23 +31,38 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { amount: 0.5 })
 
-  const options: EmblaOptionsType = {
-    loop: true,
-  }
+  const options = useMemo<EmblaOptionsType>(
+    () => ({
+      loop: true,
+    }),
+    []
+  )
 
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Fade()])
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) {
+      // Set duration to 0 for instant transitions on tap
+      emblaApi.reInit({ ...options, duration: 0 })
       emblaApi.scrollPrev()
+      // Set back to original duration after a short delay
+      setTimeout(() => {
+        emblaApi.reInit(options)
+      }, 50)
     }
-  }, [emblaApi])
+  }, [emblaApi, options])
 
   const scrollNext = useCallback(() => {
     if (emblaApi) {
+      // Set duration to 0 for instant transitions on tap
+      emblaApi.reInit({ ...options, duration: 0 })
       emblaApi.scrollNext()
+      // Set back to original duration after a short delay
+      setTimeout(() => {
+        emblaApi.reInit(options)
+      }, 50)
     }
-  }, [emblaApi])
+  }, [emblaApi, options])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX)
