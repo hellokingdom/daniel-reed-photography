@@ -2,11 +2,12 @@
 
 import { ImageFieldImage } from '@prismicio/client'
 import { PrismicNextImage } from '@prismicio/next'
-import { JSX, useState, useEffect, useRef } from 'react'
+import { JSX, useState, useEffect, useRef, useCallback } from 'react'
 import { useInView } from 'framer-motion'
 import { textAtom } from '@/atoms/textAtom'
 import { useAtom } from 'jotai/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import useEmblaCarousel from 'embla-carousel-react'
+import Fade from 'embla-carousel-fade'
 
 interface CarouselSetProps {
   images: {
@@ -17,7 +18,6 @@ interface CarouselSetProps {
 }
 
 const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
-  const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState<Record<number, boolean>>({})
   const [, setText] = useAtom(textAtom)
 
@@ -26,23 +26,34 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
   const [containerHeight, setContainerHeight] = useState<number | null>(null)
 
   const ref = useRef<HTMLDivElement | null>(null)
+  const inView = useInView(ref, { amount: 0.5 })
 
-  const inView = useInView(ref, {
-    amount: 0.5,
-  })
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      dragFree: false,
+    },
+    [Fade()]
+  )
 
-  const nextIndex = (currentIndex + 1) % images.length
-  const prevIndex = (currentIndex - 1 + images.length) % images.length
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev()
+  }, [emblaApi])
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
 
   useEffect(() => {
-    if (inView) {
+    if (inView && emblaApi) {
+      const currentIndex = emblaApi.selectedScrollSnap()
       setText({
         text: title,
         position: `${currentIndex + 1}/${images.length}`,
         isLoaded: isLoaded[currentIndex] || false,
       })
     }
-  }, [inView, currentIndex, images.length, setText, title, isLoaded])
+  }, [inView, emblaApi, images.length, setText, title, isLoaded])
 
   useEffect(() => {
     const updateContainerWidth = () => {
@@ -76,18 +87,6 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       : 'portrait'
   }
 
-  const handleNext = () => {
-    if (isLoaded[nextIndex]) {
-      setCurrentIndex(nextIndex)
-    }
-  }
-
-  const handlePrev = () => {
-    if (isLoaded[prevIndex]) {
-      setCurrentIndex(prevIndex)
-    }
-  }
-
   const handleImageLoad = (index: number) => {
     setIsLoaded((prev) => ({ ...prev, [index]: true }))
   }
@@ -102,126 +101,56 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       </div>
       <section
         ref={ref}
-        data-total-slides={images.length}
-        data-current-slide={currentIndex + 1}
         className="user-select-none relative"
         style={{
           height: containerHeight ?? undefined,
         }}
       >
-        <motion.div
-          className="relative overflow-hidden h-full w-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isLoaded[currentIndex] ? 1 : 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: 'backInOut' }}
-        >
-          {containerWidth && (
-            <div className="absolute inset-0">
-              {/* Base layer - current image */}
-              <div className="absolute inset-0 flex items-center justify-center">
+        <div className="embla overflow-hidden h-full w-full" ref={emblaRef}>
+          <div className="embla__container h-full">
+            {images.map(({ image }, index) => (
+              <div
+                key={index}
+                className="embla__slide flex items-center justify-center h-full"
+              >
                 <div
                   className={`${
-                    getAspectRatio(images[currentIndex].image) === 'portrait'
+                    getAspectRatio(image) === 'portrait'
                       ? `aspect-[3/4]`
                       : 'aspect-[6/4] max-w-[100%]'
                   }`}
                   style={{
                     width:
-                      getAspectRatio(images[currentIndex].image) === 'portrait'
+                      getAspectRatio(image) === 'portrait'
                         ? (containerWidth ?? undefined)
                         : (containerHeight ?? undefined),
                   }}
                 >
                   <PrismicNextImage
-                    field={images[currentIndex].image}
+                    field={image}
                     fallbackAlt=""
                     className="object-contain w-full h-full relative block"
-                    onLoad={() => handleImageLoad(currentIndex)}
+                    onLoad={() => handleImageLoad(index)}
                     sizes="100vw"
-                  />
-                  <PrismicNextImage
-                    field={images[nextIndex].image}
-                    fallbackAlt=""
-                    className="w-0 h-0"
-                    onLoad={() => handleImageLoad(nextIndex)}
-                    sizes="100vw"
+                    loading="eager"
                   />
                 </div>
               </div>
-
-              {/* Overlay layer - animating images */}
-              <AnimatePresence initial={false}>
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, ease: 'backInOut' }}
-                  className="absolute inset-0 flex items-center justify-center bg-white"
-                >
-                  <div
-                    className={`${
-                      getAspectRatio(images[currentIndex].image) === 'portrait'
-                        ? `aspect-[3/4]`
-                        : 'aspect-[6/4] max-w-[100%]'
-                    }`}
-                    style={{
-                      width:
-                        getAspectRatio(images[currentIndex].image) ===
-                        'portrait'
-                          ? (containerWidth ?? undefined)
-                          : (containerHeight ?? undefined),
-                    }}
-                  >
-                    <PrismicNextImage
-                      field={images[currentIndex].image}
-                      fallbackAlt=""
-                      className="object-contain w-full h-full relative block"
-                      sizes="100vw"
-                    />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Loading indicator */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
-                <motion.div
-                  className="w-2 h-2 rounded-full bg-black"
-                  animate={{
-                    scale: !isLoaded[nextIndex] ? [1, 1.5, 1] : 1,
-                  }}
-                  transition={{
-                    duration: 1,
-                    repeat: !isLoaded[nextIndex] ? Infinity : 0,
-                    ease: 'easeInOut',
-                  }}
-                />
-              </div>
-
-              {images.length > 1 && (
-                <>
-                  <div
-                    className={`absolute left-0 top-0 bottom-0 w-1/2 ${
-                      isLoaded[prevIndex]
-                        ? 'cursor-w-resize'
-                        : 'cursor-w-resize'
-                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
-                    onClick={handlePrev}
-                  />
-                  <div
-                    className={`absolute right-0 top-0 bottom-0 w-1/2 ${
-                      isLoaded[nextIndex]
-                        ? 'cursor-e-resize'
-                        : 'cursor-e-resize'
-                    } z-50 opacity-0 hover:opacity-100 transition-opacity`}
-                    onClick={handleNext}
-                  />
-                </>
-              )}
-            </div>
-          )}
-        </motion.div>
+            ))}
+          </div>
+        </div>
+        {images.length > 1 && (
+          <>
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1/2 cursor-w-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+              onClick={scrollPrev}
+            />
+            <div
+              className="absolute right-0 top-0 bottom-0 w-1/2 cursor-e-resize z-50 opacity-0 hover:opacity-100 transition-opacity"
+              onClick={scrollNext}
+            />
+          </>
+        )}
       </section>
     </>
   )
