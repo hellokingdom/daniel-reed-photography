@@ -48,6 +48,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
       emblaApi.scrollNext()
     }
   }, [emblaApi])
+
   // Add these handlers for touch events
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX)
@@ -143,7 +144,7 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
         }}
       >
         <div
-          className="embla overflow-hidden h-full w-full"
+          className="embla overflow-hidden h-full w-full relative"
           ref={emblaRef}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
