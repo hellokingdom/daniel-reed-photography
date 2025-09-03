@@ -96,12 +96,24 @@ const CarouselSet = ({ images, title }: CarouselSetProps): JSX.Element => {
 
   useEffect(() => {
     if (inView && emblaApi) {
-      const currentIndex = emblaApi.selectedScrollSnap()
-      setText({
-        text: title,
-        position: `${currentIndex + 1}/${images.length}`,
-        isLoaded: isLoaded[currentIndex] || false,
-      })
+      const updateText = () => {
+        const currentIndex = emblaApi.selectedScrollSnap()
+        setText({
+          text: title,
+          position: `${currentIndex + 1}/${images.length}`,
+          isLoaded: isLoaded[currentIndex] || false,
+        })
+      }
+
+      // Update text immediately
+      updateText()
+
+      // Listen for slide changes
+      emblaApi.on('select', updateText)
+
+      return () => {
+        emblaApi.off('select', updateText)
+      }
     }
   }, [inView, emblaApi, images.length, setText, title, isLoaded])
 
