@@ -4,7 +4,7 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
-type HomeDocumentDataSlicesSlice = PhotographySetSlice;
+type HomeDocumentDataSlicesSlice = AboutSlice | PhotographySetSlice;
 
 /**
  * Content for Home documents
@@ -66,6 +66,58 @@ export type HomeDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithoutUID<Simplify<HomeDocumentData>, "home", Lang>;
 
 export type AllDocumentTypes = HomeDocument;
+
+/**
+ * Primary content in *About → Default → Primary*
+ */
+export interface AboutSliceDefaultPrimary {
+  /**
+   * Copy field in *About → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about.default.primary.copy
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  copy: prismic.RichTextField;
+
+  /**
+   * Image field in *About → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about.default.primary.image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for About Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AboutSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<AboutSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *About*
+ */
+type AboutSliceVariation = AboutSliceDefault;
+
+/**
+ * About Shared Slice
+ *
+ * - **API ID**: `about`
+ * - **Description**: About
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AboutSlice = prismic.SharedSlice<"about", AboutSliceVariation>;
 
 /**
  * Item in *PhotographySet → Default → Primary → Images*
@@ -164,6 +216,10 @@ declare module "@prismicio/client" {
       HomeDocumentData,
       HomeDocumentDataSlicesSlice,
       AllDocumentTypes,
+      AboutSlice,
+      AboutSliceDefaultPrimary,
+      AboutSliceVariation,
+      AboutSliceDefault,
       PhotographySetSlice,
       PhotographySetSliceDefaultPrimaryImagesItem,
       PhotographySetSliceDefaultPrimary,

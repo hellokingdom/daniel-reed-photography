@@ -4,7 +4,6 @@ import { SliceZone } from '@prismicio/react'
 import { createClient } from '@/prismicio'
 import { components } from '@/slices'
 import { Info } from '@/components/Info'
-import { About } from '@/components/About'
 import { Header } from '@/components/Header'
 
 export default async function Page() {
@@ -18,7 +17,6 @@ export default async function Page() {
         <SliceZone slices={page.data.slices} components={components} />
       </div>
       <Info />
-      <About />
     </>
   )
 }
