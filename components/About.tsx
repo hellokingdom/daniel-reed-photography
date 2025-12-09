@@ -110,7 +110,7 @@ export function About({ copy, image }: AboutProps = {}) {
             <div className="flex gap-x-4">
               <div>Daniel Reed</div>
               <a className="pointer-events-auto cursor-pointer hover:text-black/50">
-                About.
+                About
               </a>
             </div>
           </div>
